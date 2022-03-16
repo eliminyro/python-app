@@ -1,0 +1,42 @@
+version: "3.8"
+
+networks:
+  pyapp:
+    name: pyapp
+
+services:
+  postgresql:
+    container_name: postgresql
+    image: bitnami/postgresql:latest
+    restart: unless-stopped
+    networks:
+      - pyapp
+    environment:
+      - POSTGRESQL_USERNAME=pyapp
+      - POSTGRESQL_PASSWORD=superpassword
+      - POSTGRESQL_DATABASE=pyappdb
+      - POSTGRESQL_TIMEZONE=Europe/Moscow
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: pg_isready -U postgres
+
+  pyapp:
+    container_name: pyapp
+    image: eliminyro/pyapp
+    restart: unless-stopped
+    networks:
+      - pyapp
+    environment:
+      - DATABASE_URL=postgresql://pyapp:superpassword@postgresql/pyappdb
+      - MAIL_SERVER=smtp.gmail.com
+      - MAIL_USERNAME=eliminyro@gmail.com
+      - MAIL_PASSWORD=isyvvfbpvrqsexfs
+      - MAIL_PORT=587
+      - MAIL_USE_TLS=True
+      - MAIL_RECIPIENT=p@eliminyro.me
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresql:
+        condition: service_healthy
