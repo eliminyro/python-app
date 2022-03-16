@@ -31,10 +31,6 @@ class Banlist(db.Model):
         return '%r, %r, %r, %r' % (self.id, self.IpAddress, self.DateTime, self.UrlPath)
 
 
-class NoneError(Exception):
-    pass
-
-
 def notify(box, passwd, server, port, recipient, tls, IpAddress):
     ''' Function that sends a notification about a snoopy visitor that managed to block themselves using this app
         It takes as arguments all the credentials necessary to send an email: mailbox (username), password, SMTP server, its port, and a switch for TLS-encrypted connection.
